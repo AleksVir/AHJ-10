@@ -69,8 +69,8 @@ export default class Controller {
   keyUp(e) {
     e.preventDefault();
 
-    if (document.querySelector(".tooltip-active") || e.code !== "Enter") {
-      return;
+    if (document.querySelector(".tooltip-active") || e.code !== "Enter"  ) {
+      return;z
     }
 
     this.parentEl = e.target.parentElement;

@@ -28,7 +28,7 @@ export default class Card {
 
     const card = this.addCard(this.created, this.content, this.coords);
 
-    panel.insertAdjacentHTML("beforeend", card);
+    panel.insertAdjacentHTML("afterend", card);
   }
 
   addCard() {
@@ -44,6 +44,6 @@ export default class Card {
       document.querySelector(".text__field").value = "";
       return result;
     }
-    return false;
+    
   }
 }

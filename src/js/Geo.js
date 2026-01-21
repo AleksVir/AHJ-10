@@ -17,7 +17,7 @@ export default class Geo {
       } else {
         this.errorDescription = {
           success: true,
-          title: "Выбранный браузер не поддерживает геолоакацию",
+          title: "Выбранный браузер не поддерживает геолокацию",
           message: "Выберите другой браузер или введите данные вручную",
         };
         resolve(this.errorDescription);
