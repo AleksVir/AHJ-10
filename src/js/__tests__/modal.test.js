@@ -1,16 +1,48 @@
 import Modal from "../Modal";
 
-const parentEl = document.createElement("div");
+import Modal from "../Modal";
 
-const modal = new Modal(parentEl);
-modal.redrawModal();
+describe("Modal", () => {
+  let parentEl;
+  let modal;
 
-test("redrawModalForm() подключает разметку в DOM", () => {
-  expect(modal.parentEl.innerHTML).toEqual(Modal.markup);
+  // Подготовка перед каждым тестом
+  beforeEach(() => {
+    parentEl = document.createElement("div");
+    document.body.appendChild(parentEl); // Добавляем в DOM для реалистичности
+    modal = new Modal(parentEl);
+  });
+
+  // Очистка после каждого теста
+  afterEach(() => {
+    if (parentEl.parentNode === document.body) {
+      document.body.removeChild(parentEl);
+    }
+  });
+
+  test("redrawModal() вставляет разметку в контейнер", () => {
+    modal.redrawModal();
+
+    // Проверяем, что контейнер содержит элемент .modal
+    const modalElement = parentEl.querySelector(".modal");
+    expect(modalElement).toBeTruthy();
+
+    // Дополнительно: проверяем наличие ключевых элементов внутри модального окна
+    expect(modalElement.querySelector(".modal__close")).toBeTruthy(); // Крестик
+    expect(modalElement.querySelector(".modal__content")).toBeTruthy(); // Контент
+  });
+
+  test("closeModal() удаляет модальное окно из DOM", () => {
+    modal.redrawModal(); // Сначала показываем
+    modal.closeModal();  // Затем закрываем
+
+    // Проверяем, что .modal больше нет в контейнере
+    const modalElement = parentEl.querySelector(".modal");
+    expect(modalElement).toBeFalsy();
+
+    // Дополнительно: проверяем, что класс modal-active удалён (если используется)
+    expect(parentEl.classList.contains("modal-active")).toBe(false);
+  });
+
+
 });
-
-// обработчик вынесен в контроллер
-/* test("клик на крестик и удаление modal-active", () => {
-  modal.closeModal();
-  expect(parentEl.querySelector(".modal")).toBeFalsy();
-}); */

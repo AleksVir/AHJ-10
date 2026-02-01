@@ -45,26 +45,32 @@ export default class Controller {
     document.querySelector(".text__field").style.outline = "none";
   }
 
-  validityFields(field) {
-    // проверка соответствия шаблону, добавление подсказки
-    const templateTooltip = document.createElement("span");
-    templateTooltip.classList.add("tooltip-active");
+validityFields(field) {
+  const parent = field.parentElement;
+  const existingTooltip = parent.querySelector('.tooltip-active');
 
-    if (
-      field.parentElement.lastElementChild.classList.contains("tooltip-active")
-    ) {
-      return;
+  // Проверяем: значение после удаления пробелов — пустое?
+  if (field.value.trim() === '') {
+    if (!existingTooltip) {
+      const tooltip = document.createElement('span');
+      tooltip.className = 'tooltip-active';
+      tooltip.textContent = '*Заполните поле';
+      parent.insertAdjacentElement('beforeend', tooltip);
     }
-
-    if (field.value === "") {
-      this.parentEl.insertAdjacentElement("beforeend", templateTooltip);
-      templateTooltip.textContent = "*Заполните поле";
-      document.querySelector(".text__field").style.outline = "2px solid red";
-
-      return false;
-    }
-    return true;
+    field.style.outline = '2px solid red';
+    field.setAttribute('aria-invalid', 'true');
+    return false;
   }
+
+  // Поле заполнено (даже если были пробелы)
+  if (existingTooltip) {
+    existingTooltip.remove();
+  }
+  field.style.outline = '';
+  field.setAttribute('aria-invalid', 'false');
+  return true;
+}
+
 
   keyUp(e) {
     e.preventDefault();

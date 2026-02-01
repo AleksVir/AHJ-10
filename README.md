@@ -2,4 +2,4 @@
 
 https://aleksvir.github.io/AHJ-10/
 
-[![Build status](https://ci.appveyor.com/api/projects/status/6rthpa3yct93p597/branch/main?svg=true)](https://ci.appveyor.com/project/AleksVir/ahj-10/branch/main)
+[![Netology AHJ](https://github.com/AleksVir/AHJ-10/actions/workflows/web.yml/badge.svg?branch=main)](https://github.com/AleksVir/AHJ-10/actions/workflows/web.yml)
