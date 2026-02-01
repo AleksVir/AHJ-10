@@ -22,12 +22,13 @@ export default class Modal {
   }
 
   redrawModal() {
-    this.parentEl.insertAdjacentHTML("afterbegin", this.constructor.markup);
-    this.modalWrapperEl.classList.add("modal-active");
-    /* this.modalButtonEl.addEventListener("click", (e) => {
-      e.preventDefault();
-      this.closeModalForm();
-    }); */
+    const modalHTML = `
+    <div class="modal">
+      <button class="modal__close">×</button>
+      <div class="modal__content">Контент</div>
+    </div>
+  `;
+    this.parentEl.innerHTML = modalHTML;
   }
 
   showDescription(title, description) {
@@ -60,13 +61,10 @@ export default class Modal {
     return this.parentEl.querySelector(".modal__add-btn");
   }
 
-  closeModalForm() {
-    if (document.querySelector(".input__coords").value === "") {
-      document.querySelector(".tooltip-active").classList.remove("hidden");
-      return;
+  closeModal() {
+    const modalElement = this.parentEl.querySelector(".modal");
+    if (modalElement) {
+      modalElement.remove();
     }
-
-    this.modalWrapperEl.classList.remove("modal-active");
-    this.parentEl.querySelector(".modal").remove();
   }
 }

@@ -14,11 +14,15 @@ export default class Validator {
   }
 
   getValuesArr() {
-    let arr = this.inputEl.value.replace(/\[|\]/g, "");
-    arr = arr.split(",");
+    const value = this.inputEl.value.trim();
 
-    const notSpace = arr.map((elem) => elem.replaceAll(" ", ""));
-    return notSpace;
+    if (!value || value === "[]") {
+      return [];
+    }
+
+    let arr = value.replace(/\[|\]/g, "").split(",");
+
+    return arr.map((elem) => elem.trim()).filter((elem) => elem.length > 0);
   }
 
   getAllowableValue(arr) {
