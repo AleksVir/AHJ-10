@@ -1,7 +1,5 @@
 import Modal from "../Modal";
 
-import Modal from "../Modal";
-
 describe("Modal", () => {
   let parentEl;
   let modal;
@@ -34,7 +32,7 @@ describe("Modal", () => {
 
   test("closeModal() удаляет модальное окно из DOM", () => {
     modal.redrawModal(); // Сначала показываем
-    modal.closeModal();  // Затем закрываем
+    modal.closeModal(); // Затем закрываем
 
     // Проверяем, что .modal больше нет в контейнере
     const modalElement = parentEl.querySelector(".modal");
@@ -43,6 +41,4 @@ describe("Modal", () => {
     // Дополнительно: проверяем, что класс modal-active удалён (если используется)
     expect(parentEl.classList.contains("modal-active")).toBe(false);
   });
-
-
 });

@@ -24,7 +24,7 @@ describe("Validator", () => {
     const result = validator.getValuesArr();
     expect(result).toEqual(["1", "2", "3"]);
   });
-  
+
   test("getValuesArr() возвращает пустой массив для пустой строки", () => {
     inputEl.value = "";
     const result = validator.getValuesArr();
@@ -36,6 +36,4 @@ describe("Validator", () => {
     const result = validator.getValuesArr();
     expect(result).toEqual(["1", "2"]);
   });
-
-
 });

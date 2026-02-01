@@ -1,4 +1,3 @@
-import Board from "./Board";
 import Geo from "./Geo";
 import Modal from "./Modal";
 import Card from "./Card";
@@ -14,7 +13,6 @@ export default class Controller {
   init() {
     this.container = document.querySelector(".container");
     this.board.createBoard();
-    const cardsPanel = document.querySelector(".input-wrapper");
     this.addSubscribe(this.container);
     this.modal = new Modal(this.container);
 
@@ -39,44 +37,43 @@ export default class Controller {
     }
 
     Array.from(document.querySelectorAll(".tooltip-active")).forEach((elem) =>
-      elem.remove()
+      elem.remove(),
     );
 
     document.querySelector(".text__field").style.outline = "none";
   }
 
-validityFields(field) {
-  const parent = field.parentElement;
-  const existingTooltip = parent.querySelector('.tooltip-active');
+  validityFields(field) {
+    const parent = field.parentElement;
+    const existingTooltip = parent.querySelector(".tooltip-active");
 
-  // Проверяем: значение после удаления пробелов — пустое?
-  if (field.value.trim() === '') {
-    if (!existingTooltip) {
-      const tooltip = document.createElement('span');
-      tooltip.className = 'tooltip-active';
-      tooltip.textContent = '*Заполните поле';
-      parent.insertAdjacentElement('beforeend', tooltip);
+    // Проверяем: значение после удаления пробелов — пустое?
+    if (field.value.trim() === "") {
+      if (!existingTooltip) {
+        const tooltip = document.createElement("span");
+        tooltip.className = "tooltip-active";
+        tooltip.textContent = "*Заполните поле";
+        parent.insertAdjacentElement("beforeend", tooltip);
+      }
+      field.style.outline = "2px solid red";
+      field.setAttribute("aria-invalid", "true");
+      return false;
     }
-    field.style.outline = '2px solid red';
-    field.setAttribute('aria-invalid', 'true');
-    return false;
-  }
 
-  // Поле заполнено (даже если были пробелы)
-  if (existingTooltip) {
-    existingTooltip.remove();
+    // Поле заполнено (даже если были пробелы)
+    if (existingTooltip) {
+      existingTooltip.remove();
+    }
+    field.style.outline = "";
+    field.setAttribute("aria-invalid", "false");
+    return true;
   }
-  field.style.outline = '';
-  field.setAttribute('aria-invalid', 'false');
-  return true;
-}
-
 
   keyUp(e) {
     e.preventDefault();
 
-    if (document.querySelector(".tooltip-active") || e.code !== "Enter"  ) {
-      return;z
+    if (document.querySelector(".tooltip-active") || e.code !== "Enter") {
+      return; // Исправлено: убрано 'z'
     }
 
     this.parentEl = e.target.parentElement;
@@ -119,7 +116,7 @@ validityFields(field) {
     if (!this.coords) {
       return;
     }
-  
+
     this.createPost(this.content, this.coords);
     this.modal.closeModalForm();
   }

@@ -39,11 +39,10 @@ export default class Card {
       const result = this.constructor.template(
         this.created,
         this.content,
-        this.coords
+        this.coords,
       );
       document.querySelector(".text__field").value = "";
       return result;
     }
-    
   }
 }

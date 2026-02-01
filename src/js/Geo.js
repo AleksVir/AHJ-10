@@ -12,7 +12,7 @@ export default class Geo {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => resolve(this.successHandler(position)),
-          (error) => resolve(this.errorHandler(error))
+          (error) => resolve(this.errorHandler(error)),
         );
       } else {
         this.errorDescription = {

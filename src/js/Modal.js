@@ -60,7 +60,7 @@ export default class Modal {
     return this.parentEl.querySelector(".modal__add-btn");
   }
 
-  closeModalForm(e) {
+  closeModalForm() {
     if (document.querySelector(".input__coords").value === "") {
       document.querySelector(".tooltip-active").classList.remove("hidden");
       return;
