@@ -1,130 +1,117 @@
-import Geo from "./Geo";
-import Modal from "./Modal";
-import Card from "./Card";
-import Validator from "./Validator";
-
+import GeolocationService from "./Geo.js";
+import Modal from "./Modal.js";
+import Post from "./Card.js";
+import CoordsValidator from "./Validator.js";
+y
 export default class Controller {
   constructor(board) {
     this.board = board;
-    this.store = []; // склад карточек
-    this.geo = new Geo();
-  }
-
-  init() {
-    this.container = document.querySelector(".container");
-    this.board.createBoard();
-    this.addSubscribe(this.container);
-    this.modal = new Modal(this.container);
-
+    this.store = [];
+    this.geo = new GeolocationService();
+    this.modal = new Modal(document.querySelector(".container"));
     this.fieldMessage = document.querySelector(".text__field");
   }
 
-  addSubscribe(element) {
-    element.addEventListener("keyup", this.keyUp.bind(this));
-    element.addEventListener("click", this.completionField.bind(this));
-    element.addEventListener("input", this.completionField.bind(this));
-    element.addEventListener("click", this.getManualCoords.bind(this));
+  init() {
+    this.addSubscribe();
   }
 
-  completionField(e) {
-    // заполнеие полей и удаление подсказок пр этом
-
-    if (
-      !e.target.classList.contains("text__field") ||
-      !document.querySelector(".tooltip-active")
-    ) {
-      return;
-    }
-
-    Array.from(document.querySelectorAll(".tooltip-active")).forEach((elem) =>
-      elem.remove(),
-    );
-
-    document.querySelector(".text__field").style.outline = "none";
+  addSubscribe() {
+    const container = document.querySelector(".container");
+    container.addEventListener("keyup", this.keyUp.bind(this));
+    container.addEventListener("click", this.completionField.bind(this));
+    container.addEventListener("input", this.completionField.bind(this));
+    container.addEventListener("click", this.getManualCoords.bind(this));
   }
 
-  validityFields(field) {
-    const parent = field.parentElement;
-    const existingTooltip = parent.querySelector(".tooltip-active");
-
-    // Проверяем: значение после удаления пробелов — пустое?
-    if (field.value.trim() === "") {
-      if (!existingTooltip) {
-        const tooltip = document.createElement("span");
-        tooltip.className = "tooltip-active";
-        tooltip.textContent = "*Заполните поле";
-        parent.insertAdjacentElement("beforeend", tooltip);
+  completionField(event) {
+    if (event.target.classList.contains("text__field")) {
+      const tooltip = document.querySelector(".tooltip-active");
+      if (tooltip) {
+        tooltip.remove(); 
+        this.fieldMessage.style.outline = "none";
       }
-      field.style.outline = "2px solid red";
-      field.setAttribute("aria-invalid", "true");
+    }
+  }
+
+  validityFields(input) {
+    const parent = input.parentElement;
+    const tooltip = parent.querySelector(".tooltip-active");
+
+    if (!input.value.trim()) {
+      if (!tooltip) {
+        const tip = document.createElement("span");
+        tip.className = "tooltip-active";
+        tip.textContent = "*Заполните поле";
+        parent.insertAdjacentElement("beforeend", tip);
+      }
+      input.style.outline = "2px solid red";
+      input.setAttribute("aria-invalid", "true");
       return false;
     }
 
-    // Поле заполнено (даже если были пробелы)
-    if (existingTooltip) {
-      existingTooltip.remove();
+    if (tooltip) {
+      tooltip.remove();
     }
-    field.style.outline = "";
-    field.setAttribute("aria-invalid", "false");
+    input.style.outline = "";
+    input.setAttribute("aria-invalid", "false");
     return true;
   }
 
-  keyUp(e) {
-    e.preventDefault();
+  keyUp(event) {
+    event.preventDefault();
+    if (document.querySelector(".tooltip-active") || event.code !== "Enter") return;
 
-    if (document.querySelector(".tooltip-active") || e.code !== "Enter") {
-      return; // Исправлено: убрано 'z'
+    if (this.validityFields(this.fieldMessage)) {
+      this.getAutoCoords();
     }
-
-    this.parentEl = e.target.parentElement;
-
-    const isValid = this.validityFields(document.querySelector(".text__field"));
-    if (!isValid) {
-      return;
-    }
-    this.getAutoCoords();
   }
 
   getAutoCoords() {
-    this.position = this.geo.getPosition();
-    this.position.then((data) => {
-      if (data.success) {
-        this.content = this.fieldMessage.value;
-        this.coords = [data.latitude, data.longitude];
-        this.createPost(this.content, this.coords);
+    this.geo.getPosition().then((result) => {
+      if (result.success) {
+        const content = this.fieldMessage.value;
+        const coords = [result.latitude, result.longitude];
+        this.createPost(content, coords);
       } else {
+       
         this.modal.redrawModal();
-        this.modal.showDescription(data.title, data.message);
+        this.modal.showDescription(result.title, result.message);
       }
+    }).catch((error) => {
+      console.error("Ошибка при получении геолокации:", error);
+     
+      this.modal.redrawModal();
+      this.modal.showDescription("Ошибка", "Не удалось получить геолокацию. Попробуйте вручную.");
     });
   }
 
-  getManualCoords(e) {
-    // добавить валидатор
-    if (!e.target.classList.contains("modal__add-btn")) {
-      return;
-    }
-    if (document.querySelector(".input__coords").value === "") {
-      document.querySelector(".tooltip-active").classList.remove("hidden");
-      return;
-    }
-    this.content = this.fieldMessage.value;
-    this.coordsValue = document.querySelector(".input__coords");
-    const validator = new Validator(this.coordsValue);
+  getManualCoords(event) {
+    if (!event.target.classList.contains("modal__add-btn")) return;
 
-    this.coords = validator.verify();
-    if (!this.coords) {
+    const coordsInput = document.querySelector(".input__coords");
+    if (!coordsInput || !coordsInput.value.trim()) {
+      const tooltip = document.querySelector(".tooltip-active");
+      if (tooltip) {
+        tooltip.classList.remove("hidden");
+      }
       return;
     }
 
-    this.createPost(this.content, this.coords);
-    this.modal.closeModalForm();
+    const validator = new CoordsValidator(coordsInput);
+    const coords = validator.verify();
+
+    if (coords) {
+      const content = this.fieldMessage.value;
+      this.createPost(content, coords);
+      this.modal.closeModal();
+    }
   }
 
   createPost(content, coords) {
-    const post = new Card(content, coords);
+    const post = new Post(content, coords);
     post.init();
-
     console.log(post, "post");
+    this.store.push(post);
   }
 }
