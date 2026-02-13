@@ -64,10 +64,10 @@ span.tooltip-active,.geo_tooltip-active {
 }
 
 .modal {
-  position: absolute;
+  position: relative;
   visibility: hidden;
   opacity: 0;
-  top: -1000;
+  top: -1000px;
   right: 0;
   bottom: 0;
   left: 0;
@@ -78,6 +78,34 @@ span.tooltip-active,.geo_tooltip-active {
   align-items: flex-start;
   overflow-y: scroll;
   padding: 60px 15px;
+}
+
+
+.modal__close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #333;
+  cursor: pointer;
+  z-index: 10;
+  padding: 0;
+  line-height: 1;
+}
+
+.modal__close:hover {
+  color: #f00;
+  transform: scale(1.1);
+}
+
+/* Для доступности: фокус при навигации */
+.modal__close:focus {
+  outline: 2px solid #007bff;
+  border-radius: 4px;
 }
 
 .modal-content {

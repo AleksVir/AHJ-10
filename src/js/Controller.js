@@ -2,7 +2,7 @@ import GeolocationService from "./Geo.js";
 import Modal from "./Modal.js";
 import Post from "./Card.js";
 import CoordsValidator from "./Validator.js";
-y
+
 export default class Controller {
   constructor(board) {
     this.board = board;
@@ -28,7 +28,7 @@ export default class Controller {
     if (event.target.classList.contains("text__field")) {
       const tooltip = document.querySelector(".tooltip-active");
       if (tooltip) {
-        tooltip.remove(); 
+        tooltip.remove();
         this.fieldMessage.style.outline = "none";
       }
     }
@@ -60,7 +60,8 @@ export default class Controller {
 
   keyUp(event) {
     event.preventDefault();
-    if (document.querySelector(".tooltip-active") || event.code !== "Enter") return;
+    if (document.querySelector(".tooltip-active") || event.code !== "Enter")
+      return;
 
     if (this.validityFields(this.fieldMessage)) {
       this.getAutoCoords();
@@ -68,22 +69,27 @@ export default class Controller {
   }
 
   getAutoCoords() {
-    this.geo.getPosition().then((result) => {
-      if (result.success) {
-        const content = this.fieldMessage.value;
-        const coords = [result.latitude, result.longitude];
-        this.createPost(content, coords);
-      } else {
-       
+    this.geo
+      .getPosition()
+      .then((result) => {
+        if (result.success) {
+          const content = this.fieldMessage.value;
+          const coords = [result.latitude, result.longitude];
+          this.createPost(content, coords);
+        } else {
+          this.modal.redrawModal();
+          this.modal.showDescription(result.title, result.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Ошибка при получении геолокации:", error);
+
         this.modal.redrawModal();
-        this.modal.showDescription(result.title, result.message);
-      }
-    }).catch((error) => {
-      console.error("Ошибка при получении геолокации:", error);
-     
-      this.modal.redrawModal();
-      this.modal.showDescription("Ошибка", "Не удалось получить геолокацию. Попробуйте вручную.");
-    });
+        this.modal.showDescription(
+          "Ошибка",
+          "Не удалось получить геолокацию. Попробуйте вручную.",
+        );
+      });
   }
 
   getManualCoords(event) {

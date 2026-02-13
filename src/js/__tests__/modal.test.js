@@ -27,7 +27,7 @@ describe("Modal", () => {
 
     // Дополнительно: проверяем наличие ключевых элементов внутри модального окна
     expect(modalElement.querySelector(".modal__close")).toBeTruthy(); // Крестик
-    expect(modalElement.querySelector(".modal__content")).toBeTruthy(); // Контент
+    expect(modalElement.querySelector(".modal-content")).toBeTruthy(); // Контент
   });
 
   test("closeModal() удаляет модальное окно из DOM", () => {
